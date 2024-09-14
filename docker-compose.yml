@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mongodb
+      - DB_PORT=27017
+      - DB_USER=${DB_USER} # Sesuaikan jika ada username untuk MongoDB
+      - DB_PASSWORD=${DB_PASSWORD} # Sesuaikan jika ada password untuk MongoDB
+      - DB_NAME=${DB_NAME}
+      - DATABASE_URL=mongodb://${DB_USER}:${DB_PASSWORD}@mongodb:27017/${DB_NAME}
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
